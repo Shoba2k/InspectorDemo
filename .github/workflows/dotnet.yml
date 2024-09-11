@@ -24,6 +24,8 @@ jobs:
       run: dotnet workload install maui   
     - name: Restore
       run: dotnet restore
+      working-directory: InspectorDemoApp/InspectorDemoApp
+
     - name: Build
       run: dotnet build -c Release -f:net8.0-windows10.019041.0
       working-directory: InspectorDemoApp/InspectorDemoApp
