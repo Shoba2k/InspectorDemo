@@ -31,9 +31,10 @@ jobs:
       working-directory: InspectorDemoApp/InspectorDemoApp
 
     - name: Decode Signing Certificate
-      run:  
-        echo "${{ secrets.SIGNING_CERTIFICATE_BASE_64_CONTENT }}" > cerf.asc
-        certutil -decode cerf.asc cerf.pfx
+      run: |
+       echo "${{ secrets.SIGNING_CERTIFICATE_BASE_64_CONTENT }}" > cerf.asc
+       certutil -decode cerf.asc cerf.pfx
+
      
     - name: Install Signing Certificate 
       run: certutil -user -p ${{ secrets.SIGNING_CERTIFICATE_PASSWORD }} -Silent -importpfx cerf.pfx NoRoot
