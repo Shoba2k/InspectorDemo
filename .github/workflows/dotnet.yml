@@ -27,11 +27,11 @@ jobs:
       working-directory: InspectorDemoApp/InspectorDemoApp
 
     - name: Build
-      run: dotnet build -c Release -f:net8.0-windows10.019041.0
+      run: dotnet build -c Release -f:net8.0-windows10.0.19041.0
       working-directory: InspectorDemoApp/InspectorDemoApp
 
     - name: Test
-      run: dotnet test -c Release -f:net8.0-windows10.019041.0
+      run: dotnet test -c Release -f:net8.0-windows10.0.19041.0
       working-directory: InspectorDemoApp/InspectorDemoApp
 
     - name: Publish
