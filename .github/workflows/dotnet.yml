@@ -36,7 +36,7 @@ jobs:
         certutil -decode cerf.asc cerf.pfx
      
     - name: Install Signing Certificate 
-      run: certutil -user -p ${{ secrets.SIGNING_CERTIFICATE_PASSWORD }} -importpfx cerf.pfx -Slient NoRoot
+      run: certutil -user -p ${{ secrets.SIGNING_CERTIFICATE_PASSWORD }} -Slient -importpfx cerf.pfx NoRoot
 
     - name: Test
       run: dotnet test -c Release -f:net8.0-windows10.0.19041.0
