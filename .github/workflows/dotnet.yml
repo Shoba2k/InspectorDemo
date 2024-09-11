@@ -30,12 +30,20 @@ jobs:
       run: dotnet build -c Release -f:net8.0-windows10.0.19041.0
       working-directory: InspectorDemoApp/InspectorDemoApp
 
+    - name: Decode Signing Certificate
+      run:  
+        echo "${{ secrets.SIGNING_CERTIFICATE_BASE_64_CONTENT }}" > cerf.asc
+        certutil -decode cerf.asc cerf.pfx
+     
+    - name: Install Signing Certificate 
+      run: certutil -user -p ${{ secrets.SIGNING_CERTIFICATE_PASSWORD }} -importpfx cerf.pfx -Slient NoRoot
+
     - name: Test
       run: dotnet test -c Release -f:net8.0-windows10.0.19041.0
       working-directory: InspectorDemoApp/InspectorDemoApp
 
     - name: Publish
-      run: dotnet publish -c Release -f:net8.0-windows10.0.19041.0 /p:GenerateAppxPackageOnBuild=true
+      run: dotnet publish -c Release -f:net8.0-windows10.0.19041.0 /p:GenerateAppxPackageOnBuild=true /p:AppxPackageSigningEnabled=true /p:PackageCertificateThumbprint=${{ secrets.SIGNING_CERTIFICATE_THUMBPRINT }}
       working-directory: InspectorDemoApp/InspectorDemoApp
 
     - name: Upload
@@ -43,3 +51,4 @@ jobs:
       with:
         name: Build
         path: InspectorDemoApp/InspectorDemoApp/bin/Release/net8.0-windows10.0.19041.0/win10-x64/AppPackages/**/*.msix
+              InspectorDemoApp/InspectorDemoApp/bin/Release/net8.0-windows10.0.19041.0/win10-x64/AppPackages/**/*.cer
