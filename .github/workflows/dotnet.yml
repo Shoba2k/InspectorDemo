@@ -73,5 +73,5 @@ jobs:
         files: |
           InspectorDemoApp/InspectorDemoApp/bin/Release/net8.0-windows10.0.19041.0/win10-x64/AppPackages/InspectorDemoApp_${{ steps.extractVersion.outputs.version }}_Test/InspectorDemoApp_${{ steps.extractVersion.outputs.version }}_x64.msix
           InspectorDemoApp/InspectorDemoApp/bin/Release/net8.0-windows10.0.19041.0/win10-x64/AppPackages/InspectorDemoApp_${{ steps.extractVersion.outputs.version }}_Test/InspectorDemoApp_${{ steps.extractVersion.outputs.version }}_x64.cer
-
+ 
 
