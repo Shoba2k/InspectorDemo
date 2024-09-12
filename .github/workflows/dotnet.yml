@@ -71,5 +71,5 @@ jobs:
       with: 
         tag_name: v${{ steps.extractVersion.outputs.version }}
         files: |
-          InspectorDemoApp/InspectorDemoApp/bin/Release/net8.0-windows10.0.19041.0/win10-x64/AppPackages/InspectorDemoApp_${{ steps.extractVersion.outputs.version }}.1_Test/InspectorDemoApp_${{ steps.extractVersion.outputs.version }}.1_x64.msix
-          InspectorDemoApp/InspectorDemoApp/bin/Release/net8.0-windows10.0.19041.0/win10-x64/AppPackages/InspectorDemoApp_${{ steps.extractVersion.outputs.version }}.1_Test/InspectorDemoApp_${{ steps.extractVersion.outputs.version }}.1_x64.cer
+          InspectorDemoApp/InspectorDemoApp/bin/Release/net8.0-windows10.0.19041.0/win10-x64/AppPackages/InspectorDemoApp_${{ steps.extractVersion.outputs.version }}.0_Test/InspectorDemoApp_${{ steps.extractVersion.outputs.version }}.0_x64.msix
+          InspectorDemoApp/InspectorDemoApp/bin/Release/net8.0-windows10.0.19041.0/win10-x64/AppPackages/InspectorDemoApp_${{ steps.extractVersion.outputs.version }}.0_Test/InspectorDemoApp_${{ steps.extractVersion.outputs.version }}.0_x64.cer
