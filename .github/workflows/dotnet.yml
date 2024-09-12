@@ -12,17 +12,19 @@ permissions:
 
 jobs:
   build:
-
     runs-on: windows-latest
 
     steps:
     - uses: actions/checkout@v4
+
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: 8.0.x
+
     - name: Install MAUI Workload
       run: dotnet workload install maui   
+
     - name: Restore
       run: dotnet restore
       working-directory: InspectorDemoApp/InspectorDemoApp
@@ -50,9 +52,9 @@ jobs:
       id: extractVersion
       shell: pwsh
       run: |
-        $xml =[Xml] (Get-Content InspectorDemoApp\InspectorDemoApp\InspectorDemoApp.csproj)
-        [string] $version = [Version]$xml.Project.PropertyGroup.ApplicationDisplayVersion
-        echo "version=$($version)" >> $env:GITHUB_OUTPUT
+        $xml = [Xml](Get-Content InspectorDemoApp/InspectorDemoApp/InspectorDemoApp.csproj)
+        [string]$version = [Version]$xml.Project.PropertyGroup.ApplicationDisplayVersion
+        echo "version=$version" >> $env:GITHUB_OUTPUT
 
     - name: Create Tag 
       uses: actions/github-script@v5
@@ -63,13 +65,22 @@ jobs:
              owner: context.repo.owner,
              repo: context.repo.repo,
              sha: context.sha,
-             ref:'refs/tags/v${{ steps.extractVersion.outputs.version }}'
-           })
+             ref: 'refs/tags/v${{ steps.extractVersion.outputs.version }}'
+          })
            
     - name: Create Release
       uses: softprops/action-gh-release@v1
       with: 
         tag_name: v${{ steps.extractVersion.outputs.version }}
         files: |
-          InspectorDemoApp/InspectorDemoApp/bin/Release/net8.0-windows10.0.19041.0/win10-x64/AppPackages/InspectorDemoApp_${{ steps.extractVersion.outputs.version }}.0_Test/InspectorDemoApp_${{ steps.extractVersion.outputs.version }}.0_x64.msix
-          InspectorDemoApp/InspectorDemoApp/bin/Release/net8.0-windows10.0.19041.0/win10-x64/AppPackages/InspectorDemoApp_${{ steps.extractVersion.outputs.version }}.0_Test/InspectorDemoApp_${{ steps.extractVersion.outputs.version }}.0_x64.cer
+          InspectorDemoApp/InspectorDemoApp/bin/Release/net8.0-windows10.0.19041.0/win10-x64/AppPackages/InspectorDemoApp_${{ steps.extractVersion.outputs.version }}_Test/InspectorDemoApp_${{ steps.extractVersion.outputs.version }}_x64.msix
+          InspectorDemoApp/InspectorDemoApp/bin/Release/net8.0-windows10.0.19041.0/win10-x64/AppPackages/InspectorDemoApp_${{ steps.extractVersion.outputs.version }}_Test/InspectorDemoApp_${{ steps.extractVersion.outputs.version }}_x64.cer
+
+    - name: Upload Build Artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: Build
+        path: |
+          InspectorDemoApp/InspectorDemoApp/bin/Release/net8.0-windows10.0.19041.0/win10-x64/AppPackages/**/*.msix
+          InspectorDemoApp/InspectorDemoApp/bin/Release/net8.0-windows10.0.19041.0/win10-x64/AppPackages/**/*.cer
+        if-no-files-found: error
