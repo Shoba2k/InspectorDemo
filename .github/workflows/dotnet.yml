@@ -76,11 +76,4 @@ jobs:
           InspectorDemoApp/InspectorDemoApp/bin/Release/net8.0-windows10.0.19041.0/win10-x64/AppPackages/InspectorDemoApp_${{ steps.extractVersion.outputs.version }}_Test/InspectorDemoApp_${{ steps.extractVersion.outputs.version }}_x64.msix
           InspectorDemoApp/InspectorDemoApp/bin/Release/net8.0-windows10.0.19041.0/win10-x64/AppPackages/InspectorDemoApp_${{ steps.extractVersion.outputs.version }}_Test/InspectorDemoApp_${{ steps.extractVersion.outputs.version }}_x64.cer
 
-    - name: Upload Build Artifacts
-      uses: actions/upload-artifact@v4
-      with:
-        name: Build
-        path: |
-          InspectorDemoApp/InspectorDemoApp/bin/Release/net8.0-windows10.0.19041.0/win10-x64/AppPackages/**/*.msix
-          InspectorDemoApp/InspectorDemoApp/bin/Release/net8.0-windows10.0.19041.0/win10-x64/AppPackages/**/*.cer
-        if-no-files-found: error
+   
