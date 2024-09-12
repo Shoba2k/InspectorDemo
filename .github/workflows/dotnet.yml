@@ -61,14 +61,13 @@ jobs:
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         script: |
-          const { data: tags } = await github.rest.git.listRefs({
+          const { data: tags } = await github.rest.git.listTags({
             owner: context.repo.owner,
-            repo: context.repo.repo,
-            ref: 'tags/'
+            repo: context.repo.repo
           });
           
           const versionTag = `v${{ steps.extractVersion.outputs.version }}`;
-          const existingTag = tags.find(tag => tag.ref === `refs/tags/${versionTag}`);
+          const existingTag = tags.find(tag => tag.name === versionTag);
           
           if (existingTag) {
             // Update existing tag
@@ -104,4 +103,3 @@ jobs:
           InspectorDemoApp/InspectorDemoApp/bin/Release/net8.0-windows10.0.19041.0/win10-x64/AppPackages/**/*.msix
           InspectorDemoApp/InspectorDemoApp/bin/Release/net8.0-windows10.0.19041.0/win10-x64/AppPackages/**/*.cer
         if-no-files-found: error
-
