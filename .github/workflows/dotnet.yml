@@ -56,18 +56,38 @@ jobs:
         [string]$version = [Version]$xml.Project.PropertyGroup.ApplicationDisplayVersion
         echo "version=$version" >> $env:GITHUB_OUTPUT
 
-    - name: Create Tag 
+    - name: Create or Update Tag
       uses: actions/github-script@v5
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         script: |
-          github.rest.git.createRef({
-             owner: context.repo.owner,
-             repo: context.repo.repo,
-             sha: context.sha,
-             ref: 'refs/tags/v${{ steps.extractVersion.outputs.version }}'
-          })
-           
+          const { data: tags } = await github.rest.git.listRefs({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            ref: 'tags/'
+          });
+          
+          const versionTag = `v${{ steps.extractVersion.outputs.version }}`;
+          const existingTag = tags.find(tag => tag.ref === `refs/tags/${versionTag}`);
+          
+          if (existingTag) {
+            // Update existing tag
+            await github.rest.git.updateRef({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: existingTag.ref,
+              sha: context.sha
+            });
+          } else {
+            // Create new tag
+            await github.rest.git.createRef({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              sha: context.sha,
+              ref: `refs/tags/${versionTag}`
+            });
+          }
+
     - name: Create Release
       uses: softprops/action-gh-release@v1
       with: 
@@ -76,4 +96,12 @@ jobs:
           InspectorDemoApp/InspectorDemoApp/bin/Release/net8.0-windows10.0.19041.0/win10-x64/AppPackages/InspectorDemoApp_${{ steps.extractVersion.outputs.version }}_Test/InspectorDemoApp_${{ steps.extractVersion.outputs.version }}_x64.msix
           InspectorDemoApp/InspectorDemoApp/bin/Release/net8.0-windows10.0.19041.0/win10-x64/AppPackages/InspectorDemoApp_${{ steps.extractVersion.outputs.version }}_Test/InspectorDemoApp_${{ steps.extractVersion.outputs.version }}_x64.cer
 
-   
+    - name: Upload Build Artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: Build
+        path: |
+          InspectorDemoApp/InspectorDemoApp/bin/Release/net8.0-windows10.0.19041.0/win10-x64/AppPackages/**/*.msix
+          InspectorDemoApp/InspectorDemoApp/bin/Release/net8.0-windows10.0.19041.0/win10-x64/AppPackages/**/*.cer
+        if-no-files-found: error
+
