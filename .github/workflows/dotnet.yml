@@ -1,5 +1,6 @@
 # This workflow will build a .NET project
 # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
+
 name: .NET
 
 on:
@@ -9,22 +10,19 @@ on:
     branches: [ "main" ]
 permissions:
   contents: write 
-
 jobs:
   build:
+
     runs-on: windows-latest
 
     steps:
     - uses: actions/checkout@v4
-
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: 8.0.x
-
     - name: Install MAUI Workload
       run: dotnet workload install maui   
-
     - name: Restore
       run: dotnet restore
       working-directory: InspectorDemoApp/InspectorDemoApp
@@ -38,13 +36,16 @@ jobs:
        echo "${{ secrets.SIGNING_CERTIFICATE_BASE_64_CONTENT }}" > cerf.asc
        certutil -decode cerf.asc cerf.pfx
 
+     
     - name: Install Signing Certificate 
       run: certutil -user -p ${{ secrets.SIGNING_CERTIFICATE_PASSWORD }} -Silent -importpfx cerf.pfx NoRoot
+
 
     - name: Publish
       run: dotnet publish -c Release -f:net8.0-windows10.0.19041.0 /p:GenerateAppxPackageOnBuild=true /p:AppxPackageSigningEnabled=true /p:PackageCertificateThumbprint=${{ secrets.SIGNING_CERTIFICATE_THUMBPRINT }}
       working-directory: InspectorDemoApp/InspectorDemoApp
    
+      
     - name: List Build Output
       run: dir InspectorDemoApp/InspectorDemoApp/bin/Release/net8.0-windows10.0.19041.0/win10-x64/AppPackages
     - name:  Extract Version
@@ -66,12 +67,14 @@ jobs:
              ref:'refs/tags/v${{stpes.extractVersion.outputs.version}}'
              
            })
+           
     - name: Create Release
       uses: softprops/action-gh-release@v1
       with: 
-        tag_name: v${{ steps.extractVersion.outputs.version }}
+        tag_name: v${{ steps.extractversion.outputs.version }}
         files: |
-          InspectorDemoApp/InspectorDemoApp/bin/Release/net8.0-windows10.0.19041.0/win10-x64/AppPackages/InspectorDemoApp_${{ steps.extractVersion.outputs.version }}_Test/InspectorDemoApp_${{ steps.extractVersion.outputs.version }}_x64.msix
-          InspectorDemoApp/InspectorDemoApp/bin/Release/net8.0-windows10.0.19041.0/win10-x64/AppPackages/InspectorDemoApp_${{ steps.extractVersion.outputs.version }}_Test/InspectorDemoApp_${{ steps.extractVersion.outputs.version }}_x64.cer
- 
+          InspectorDemoApp/InspectorDemoApp/bin/Release/net8.0-windows10.0.19041.0/win10-x64/AppPackages/InspectorDemoApp_${{stpes.extractVersion.outputs.version}}.1_Test/InspectorDemoApp_${{stpes.extractVersion.outputs.version}}.1_x64.msix
+          InspectorDemoApp/InspectorDemoApp/bin/Release/net8.0-windows10.0.19041.0/win10-x64/AppPackages/InspectorDemoApp_${{stpes.extractVersion.outputs.version}}.1_Test/InspectorDemoApp_${{stpes.extractVersion.outputs.version}}.1_x64.cer
 
+        
+      
